@@ -63,9 +63,9 @@ def update_customer(customer_list):
     id = validate_input("Nhập mã KH cần cập nhật: ")
     for customer in customer_list:
         if id.lower() == customer.get("id").lower():
-            customer.get("phone") = validate_input("Nhập số điện thoại mới: ")
-            customer.get("spending_total") = validate_input("Nhập tổng chi tiêu mới: ")
-            customer.get("buying_count") = validate_input("Nhập số lần mua mới: ")
+            customer["phone"] = validate_input("Nhập số điện thoại mới: ")
+            customer["spending_total"] = validate_input("Nhập tổng chi tiêu mới: ")
+            customer["buying_count"] = validate_input("Nhập số lần mua mới: ")
             print("Cập nhật thành công!")
             print(f"Tỷ lệ chiết khấu mới: {ranking(customer.get("spending_total")).get("discount_rate")}")
             print(f"Hạng thành viên mới: {ranking(customer.get("spending_total")).get("rank")}")
@@ -90,6 +90,54 @@ def delete_customer(customer_list):
     else:
         print("Không tìm thấy mã KH!")
 
+def search_customer(customer_list):
+    if not customer_list:
+        print("Danh sách rỗng!")
+        return
+    print("""
+===== TIÊU CHÍ TÌM KIẾM =====
+1. Tìm theo mã KH
+2. Tìm gần đúng theo Tên khách hàng""")
+    while True:
+        choice = validate_input("Nhập lựa chọn: ")
+        match choice:
+            case 1:
+                id = validate_input("Nhập mã KH cần tìm: ")
+                for customer in customer_list:
+                    if id.lower() == customer.get("id").lower():
+                        print("===== DANH SÁCH KHÁCH HÀNG CẦN TÌM =====")
+                        print(f"{"Mã KH":<10} | {"Họ tên":<20} | {"Số điện thoại":<20} | {"Tổng chi tiêu":<20} | {"Số lần mua":<20} | {"Tỷ lệ chiết khấu":<20} | {"Hạng thành viên":<20}")
+                        print(f"{customer.get("id"):<10} | {customer.get("name"):<20} | {customer.get("phone"):<20} | {customer.get("spending_total"):<20} | {customer.get("buying_count"):<20} | {ranking(customer.get("spending_total")).get("discount_rate"):<20} | {ranking(customer.get("spending_total")).get("rank"):<20}")
+                        break
+                else: 
+                    print("Không tìm thấy mã KH!")
+                break
+
+            case 2:
+                print()
+
+            case _:
+                print("Lựa chọn không hợp lệ!")
+    
+def count_rank(customer_list):
+    copper_rank = 0
+    silver_rank = 0
+    gold_rank = 0
+    diamond_rank = 0
+    for customer in customer_list:
+        if customer.get("spending_total") < 5000000:
+            copper_rank += 1
+        elif 5000000 <= customer.get("spending_total") < 15000000:
+            silver_rank += 1
+        elif 15000000 <= customer.get("spending_total") < 30000000:
+            gold_rank += 1
+        else:
+            diamond_rank += 1
+    print(f"Số lượng KH hạng Đồng: {copper_rank}")
+    print(f"Số lượng KH hạng Bạc: {silver_rank}")
+    print(f"Số lượng KH hạng Vàng: {gold_rank}")
+    print(f"Số lượng KH hạng Kim cương: {diamond_rank}")
+
 def main():
     customer_list = [
         {"id": "KH001", "name": "Tran Minh Cuong", "phone": "0987654321", "spending_total": 12500000, "buying_count": 5}
@@ -111,10 +159,10 @@ def main():
                 delete_customer(customer_list)
 
             case "5":
-                print()
+                search_customer(customer_list)
 
             case "6":
-                print()
+                count_rank(customer_list)
 
             case "7":
                 print("Thoát chương trình!")
